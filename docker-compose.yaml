@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  mongo-blog-db:
+    image: mongo
+    container_name: mongo-blog-db
+    restart: always
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: user
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: blog
+    volumes:
+      - mongo-blog-db:/var/lib/mongo
+
+  mongo-express-blog-db: 
+    image: mongo-express 
+    container_name: mongo-express-blog-db 
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: user
+      ME_CONFIG_MONGODB_ADMINPASSWORD: password
+      ME_CONFIG_MONGODB_URL: mongodb://user:password@mongo-blog-db:27017/
+    depends_on:
+      - mongo-blog-db
+
+volumes: 
+  mongo-blog-db:
