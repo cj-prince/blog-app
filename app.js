@@ -6,7 +6,7 @@ const user = require('./src/routes/user_routes.js')
 const connectDB = require('./src/config/connext.js');
 const fileupload = require('express-fileupload');
 const errorHandler = require('./src/middleware/errorHandler')
-const logger = require('./src/config/logger')
+const logger = require('./src/config/logger/index')
 
 app.use(fileupload({ useTempFiles: true }));
 
@@ -33,4 +33,4 @@ app.use(errorHandler)
 
 
 
-app.listen(port, () => logger.log('info',`app is running on port ${port}`))
+app.listen(port, () => logger.http(`app is running on port ${port}`)) 
