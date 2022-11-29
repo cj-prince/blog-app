@@ -1,11 +1,13 @@
 const Blog = require('../models/blog');
 const cloudinary = require('../config/cloudinary.js');
 const { successMessage, errorMessage } = require('../helpers/response');
+const Queue = require('../helpers/queue');
+const rabbitmq = new Queue();
 
-const postBlog = async (req, res) => {
-  let { title, description, content,image} = req.body;
+const postBlog = async (req, res, next) => {
+  let { title, description, content} = req.body;
    console.log('body>>', req.body);
-//   let {image} = req.files
+  let {image} = req.files
    const file = req.files.image;
    console.log(file)
   try {
@@ -15,14 +17,17 @@ const postBlog = async (req, res) => {
    });
    image = cloudImage.secure_url;
    
-    const savePost = await new Blog(title, description, content, image);
+    const savePost = await  Blog.create({title, description, content,image});
+    rabbitmq.consumeMessages();
+    rabbitmq.publishMessage('product created');
     const savedPost = await savePost.save();
-    return successMessage({
+    return successMessage(res, {
       status: 200,
       message: 'Blog Created',
       data: savedPost,
     });
   } catch (error) {
+    console.log(error)
     next({ status: 500, message: '' });
   }
 };

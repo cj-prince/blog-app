@@ -27,5 +27,18 @@ services:
     depends_on:
       - mongo-blog-db
 
+  node_blog_rabbitmq:
+    container_name: node_blog_rabbitmq
+    image: 'rabbitmq:3.9.13-management'
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    hostname: node_blog_rabbitmq
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+
 volumes: 
   mongo-blog-db:
+
+
