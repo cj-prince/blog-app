@@ -38,3 +38,5 @@ app.listen(port, async () => {
   logger.info(`app is running on port ${port}`);
   // logger.info(`${await rabbitmq.createChannel()}`);
 });
+
+module.exports = app

@@ -1,16 +1,17 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const { successMessage, errorMessage} = require('../helpers/response')
+const { successMessage, errorMessage} = require('../helpers/response');
+const logger = require('../config/logger');
 
 const registerUser = async (req, res) => {
   let { name, email, password } = req.body;
   try {
-    let user = await User.findOne({ email: email });
-      
+    let user = await User.findOne({ email });
     if (user) {
-      next({ status: 400, message: 'That user already exists!' });
+      return res.json({ status: 422, message: 'User already exists!' });
     } else {
+
       user = new User({
         name: name,
         email: email,
@@ -18,14 +19,14 @@ const registerUser = async (req, res) => {
       });
       user.password = bcrypt.hashSync(password, 10);
       await user.save();
-      successMessage({
+      successMessage(res, {
         message: 'user created successfully',
         status: 'success',
         data: user,
       });
     }
   } catch (error) {
-    return next({ status: 500, message: '' });
+    return res.json({ status: 500, message: '' });
   }
 };
 
@@ -33,10 +34,10 @@ const loginUser = async (req, res, next) => {
   let { email, password } = req.body;
   try {
     const user = await User.findOne({
-      email: email,
+      email,
     });
     if (!user) {
-      next({ status: 400, message: 'User not found' });
+      return res.json({ status: 422, message: 'User not found' });
       // res.status(400).json({
       //   status: 'failed',
       //   message: 'User not found',
@@ -44,7 +45,7 @@ const loginUser = async (req, res, next) => {
     }
     const passwordMatch = bcrypt.compareSync(password, user.password);
     if (!passwordMatch) {
-      next({ status: 400, message: 'Incorrect login details' });
+      return res.json({ status: 400, message: 'Incorrect login details' });
       // res.status(400).json({
       //   status: 'failed',
       //   message: 'Incorrect login details',
@@ -71,7 +72,7 @@ const loginUser = async (req, res, next) => {
       },
     });
   } catch (error) {
-    return next({ status: 500, message: '' });
+    return res.json({ status: 500, message: '' });
   }
 };
 
