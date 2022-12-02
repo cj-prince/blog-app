@@ -19,12 +19,12 @@ let {
 } = require('./auth-seed');
 //Our parent block
 describe('User', () => {
-  // beforeEach((done) => {
-  //   //Before each test we empty the database
-  //   User.deleteMany({}, (err) => {
-  //     done();
-  //   });
-  // });
+  beforeEach((done) => {
+    //Before each test we empty the database
+    User.deleteMany({}, (err) => {
+      done();
+    });
+  });
   /*
    * Test the /GET route
    */

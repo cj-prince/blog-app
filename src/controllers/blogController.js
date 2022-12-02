@@ -1,8 +1,27 @@
 const Blog = require('../models/blog');
 const cloudinary = require('../config/cloudinary.js');
+// const redis = require('../config/redis');
+const redis = require('redis');
+const client = redis.createClient(6379);
 const { successMessage, errorMessage } = require('../helpers/response');
 const Queue = require('../helpers/queue');
 const rabbitmq = new Queue();
+client.connect();
+
+const getAll = async (req, res, next) => {
+  try {
+    const post = await Blog.find();
+     client.set(post, 3600);
+     client.get(post);
+    return successMessage(res, {
+      status: 200,
+      data: post,
+    });
+  } catch (error) {
+    console.log(error)
+    return res.json({ status: 500, message: error });
+  }
+};
 
 const postBlog = async (req, res, next) => {
   let { title, description, content} = req.body;
@@ -62,17 +81,6 @@ const deletePost = async (req, res) => {
   }
 };
 
-const getAll = async (req, res) => {
-  try {
-    const post = await Blog.find();
-    return successMessage({
-      status: 200,
-      data: post,
-    });
-  } catch (error) {
-    next({ status: 500, message: '' });
-  }
-};
 
 const getOnePost = async (req, res) => {
   let { id } = req.params;

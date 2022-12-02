@@ -38,7 +38,21 @@ services:
       - '5672:5672'
       - '15672:15672'
 
+  node_redis:
+    container_name: node_redis
+    image: redis:latest
+    restart: on-failure
+    environment:
+      REDIS_PASSWORD:
+    volumes:
+      - node_blog:/data
+    ports:
+      - '6378:6378'
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+
 volumes: 
   mongo-blog-db:
+  node_blog:
 
 
