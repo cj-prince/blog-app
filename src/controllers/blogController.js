@@ -10,9 +10,11 @@ client.connect();
 
 const getAll = async (req, res, next) => {
   try {
+    let posted = 'posted' //redis object
+   
     const post = await Blog.find();
-     client.set(post, 3600);
-     client.get(post);
+    client.get(posted, post);
+    client.set(posted, JSON.stringify(post));
     return successMessage(res, {
       status: 200,
       data: post,
