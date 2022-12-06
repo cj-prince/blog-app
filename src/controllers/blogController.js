@@ -14,7 +14,7 @@ const getAll = async (req, res, next) => {
    
     const post = await Blog.find();
     client.get(posted, post);
-    client.set(posted, JSON.stringify(post));
+    client.setEx(posted, 3600, JSON.stringify(post));
     return successMessage(res, {
       status: 200,
       data: post,
